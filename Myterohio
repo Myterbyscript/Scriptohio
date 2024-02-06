@@ -1,0 +1,26 @@
+-- 
+
+local function CreateESP(item)
+    CreateESP(BoxGreen)
+    
+    -- Certifique-se de ajustar a posição e o tamanho conforme necessário
+end
+
+for _, item in pairs(workspace:GetChildren()) do
+    CreateESP(Itens)
+end
+
+
+local function ToggleESP()
+    for _, esp in pairs(game.CoreGui:GetChildren()) do
+        if esp:IsA("TextLabel") then
+            esp.Visible = not esp.Visible
+        end
+    end
+end
+
+UserInputService.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.ExecuteScript then
+        ToggleESP()
+    end
+end)

@@ -1,52 +1,26 @@
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local Camera = workspace.CurrentCamera
+local scriptCode = [[
 
-local function CreateESP(item)
-    local ESP = Instance.new("TextLabel")
-    ESP.Size = UDim2.new(0, 150, 0, 30) -- Tamanho da caixa
-    ESP.BackgroundTransparency = 0.5
-    ESP.BackgroundColor3 = Color3.new(0, 1, 0) -- Verde simples
-    ESP.TextColor3 = Color3.new(1, 1, 1)
-    ESP.TextSize = 18 -- Tamanho do texto
-    ESP.Font = Enum.Font.SourceSansBold -- Fonte em negrito
-    ESP.Text = item.Name
-    ESP.Position = UDim2.new(0.5, 0, 0.5, 0)
-    ESP.Parent = game.CoreGui
 
-    local function UpdateESP()
-        local Vector, OnScreen = Camera:WorldToViewportPoint(item.Position)
-        if OnScreen then
-            ESP.Visible = true
-            ESP.Position = UDim2.new(Vector.X, -75, Vector.Y, -15) -- Ajuste a posição do texto
-        else
-            ESP.Visible = false
-        end
-    end
-
-    RunService.RenderStepped:Connect(UpdateESP)
-    Players.PlayerRemoving:Connect(function()
-        ESP:Destroy()
-    end)
+function CalculateDistance(x1, y1, x2, y2)
+    local dx = x2 - x1
+    local dy = y2 - y1
+    return math.sqrt(dx * dx + dy * dy)
 end
 
-for _, item in pairs(workspace:GetChildren()) do
-    CreateESP(item)
-end
+while true do
+    local playerX, playerY = game.Players.LocalPlayer.Character.HumanoidRootPart.Position
 
-UserInputService.InputBegan:Connect(function(input)
-    if input.KeyCode == Enum.KeyCode.Q then
-        for _, esp in pairs(game.CoreGui:GetChildren()) do
-            if esp:IsA("TextLabel") then
-                esp.Visible = not esp.Visible
+    for _, otherPlayer in pairs(game.Players:GetPlayers()) do
+        local otherX, otherY = otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") and otherPlayer.Character.HumanoidRootPart.Position
+
+        if otherX and otherY then
+            local distance = CalculateDistance(playerX, playerY, otherX, otherY)
+            if distance <= 200 then
+                print(otherPlayer.Name .. " está a " .. distance .. " metros de você.")
             end
         end
     end
-end)
 
-local code = [[
-    for _, item in pairs(workspace:GetChildren()) do
-        CreateESP(item)
-    end
-]]
+    wait(0.1)
+end
+]
